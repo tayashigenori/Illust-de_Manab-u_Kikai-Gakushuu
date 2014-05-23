@@ -34,7 +34,7 @@ class Saishou_Jijou_Gakushuu:
 
     def get_x(self, n, lower = -3, upper = 3):
         return np.linspace(lower, upper, n)
-    def get_X(self, large_N, lower = -3, upper = 3):
+    def get_large_X(self, large_N, lower = -3, upper = 3):
         return np.linspace(lower, upper, large_N)
     def get_pix(self, x):
         return np.pi * x
@@ -47,7 +47,7 @@ class Saishou_Jijou_Gakushuu:
         # p(:,1) = ones(n, 1) # n*1
         p[:,0] = np.ones(n)
         return p
-    def initialize_P(self, large_N, iteration):
+    def initialize_large_P(self, large_N, iteration):
         P = np.zeros( (large_N, 2*iteration) )
         # p(:,1) = ones(N, 1) # N*1
         P[:,0] = np.ones(large_N)
@@ -56,15 +56,16 @@ class Saishou_Jijou_Gakushuu:
         p[:, 2*j]   = np.sin(j/2*x)
         p[:, 2*j+1] = np.cos(j/2*x)
         return p
-    def append_P(self, P, j, large_X):
-        P[:, 2*j]   = np.sin(j/2*large_X)
-        P[:, 2*j+1] = np.cos(j/2*large_X)
-        return P
+    def append_large_P(self, large_P, j, large_X):
+        large_P[:, 2*j]   = np.sin(j/2*large_X)
+        large_P[:, 2*j+1] = np.cos(j/2*large_X)
+        return large_P
 
     def get_t(self, p, y):
+        #x = np.linalg.solve(p, y)
         x,resid,rank,s = np.linalg.lstsq(p, y)
         return x
-    def get_F(self, large_P, t):
+    def get_large_F(self, large_P, t):
         return np.dot(large_P, t)
 
     def plot(self, large_X, large_F, x, y):
@@ -75,19 +76,19 @@ class Saishou_Jijou_Gakushuu:
 
     def process(self, n, large_N, iteration):
         x = self.get_x(n)
-        large_X = self.get_X(large_N)
+        large_X = self.get_large_X(large_N)
         pix = self.get_pix(x)
         y = self.get_y(pix, x, n)
 
         # initialize p, P
         p = self.initialize_p(n, iteration)
-        large_P = self.initialize_P(large_N, iteration)
+        large_P = self.initialize_large_P(large_N, iteration)
         # loop on p, P
         for j in range(iteration):
             p = self.append_p(p, j, x)
-            large_P = self.append_P(large_P, j, large_X)
+            large_P = self.append_large_P(large_P, j, large_X)
         t = self.get_t(p, y)
-        large_F = self.get_F(large_P, t)
+        large_F = self.get_large_F(large_P, t)
 
         # plot
         self.plot(large_X, large_F, x, y)
