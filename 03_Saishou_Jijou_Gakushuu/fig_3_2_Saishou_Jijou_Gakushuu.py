@@ -2,6 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+#http://gihyo.jp/dev/serial/01/machine-learning/0011
 class Saishou_Jijou_Gakushuu_tmp:
     def __init__(self,
                  X = [0.02, 0.12, 0.19, 0.27, 0.42, 0.51, 0.64, 0.84, 0.88, 0.99],
